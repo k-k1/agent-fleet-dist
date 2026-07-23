@@ -8,24 +8,26 @@ Distribution artifacts for [Agent Fleet](https://github.com/k-k1/agent-fleet).
 ## What is Agent Fleet?
 
 Agent Fleet is a self-hosted web console for running AI coding agents
-(Claude Code, Codex CLI, GitHub Copilot CLI, Antigravity CLI, OpenCode) as a
-managed fleet. Each member gets an isolated workspace — a Docker container with
-cgroup CPU/memory quotas (or a bubblewrap-sandboxed rootfs in the native
-edition) with a persistent home and git working copies — and starts, drives and
-monitors agent sessions from the browser. A Go control plane orchestrates the
+(Claude Code, Codex CLI, GitHub Copilot CLI, Antigravity CLI, Cursor CLI,
+OpenCode) as a managed fleet. Each member gets an isolated workspace — a
+Docker container with cgroup CPU/memory quotas (or a bubblewrap-sandboxed
+rootfs in the native edition) with a persistent home and git working copies —
+and starts, drives and monitors agent sessions from the browser. A Go control plane orchestrates the
 workspaces.
 
 Key features:
 
-- **Five agent CLIs, one console** — run Claude Code / Codex / GitHub Copilot /
-  Antigravity / OpenCode sessions side by side, with per-session model choice.
-  CLI versions are pinned to verified combinations (opt-in self-update).
+- **Six agent CLIs, one console** — run Claude Code / Codex / GitHub Copilot /
+  Antigravity / Cursor / OpenCode sessions side by side, with per-session model
+  choice. CLI versions are pinned to verified combinations (opt-in self-update).
 - **Parallel sessions on real git repos** — clone over HTTPS (GitHub /
   Bitbucket tokens or OAuth device flow) with **Git LFS, submodules (incl.
   nested) and git-worktree support**; run multiple sessions per repo isolated
   in worktrees, follow each conversation live in a mirror view with terminal
   access, queue input while the agent works, and open plain **shell sessions**
-  next to agent sessions.
+  next to agent sessions. **Subversion works too** — check out over URL + basic
+  auth (subtree and multiple-path checkouts, optional per-server trust for
+  self-signed certificates, automatic working-copy lock recovery).
 - **Project-centric console** — file browser, commit graph and diffs, session
   state badges (working / awaiting input), a memo queue with image attachments,
   a notification center, English/Japanese UI, keyboard-first operation
@@ -45,6 +47,22 @@ Key features:
   across different agents and hand tasks over between them with summarized
   context, and act as an **SRE assistant** through PagerDuty / Grafana /
   CloudWatch integrations and AWS SSM login sessions to your servers.
+- **Scheduled execution** — have the assistant schedule recurring agent runs in
+  plain language ("every weekday at 9:00, review yesterday's changes"): the
+  control plane fires them on a wall-clock (cron / interval / one-off, timezone-
+  and DST-aware), **waking a stopped workspace**, running the prompt, and
+  reporting back — so timed work happens even while nobody is watching. Reuse a
+  long-lived session to build up context across runs, or start fresh each time;
+  browse the schedule list and per-run history (with the session each run drove)
+  from the left rail.
+- **Chat bridge (Discord / Slack)** — connect a bot from the Console (guided,
+  token-paste wizard) and each session gets its own thread: replies ready,
+  questions, plan approvals, permission requests, abnormal exits and completion
+  reports arrive there. Reply in the thread to steer the session, answer
+  questions and approve plans with buttons, or @mention the fleet operator to
+  drive the whole fleet from chat — destructive actions triggered from chat
+  stop at an approve/deny gate first. An opt-in full-text mode posts the
+  agent's actual replies (with automatic secret redaction).
 - **Operable** — backup/restore scripts, forward-only DB migrations for
   upgrades, air-gap installation paths, and MCP integration points.
 
@@ -58,8 +76,6 @@ share any AI-provider credentials.
 |---|---|---|
 | Personal use on WSL2 or a single-user Linux machine; no Docker | **Native** (below) | x86_64 Linux/WSL2 with unprivileged user namespaces (stock WSL2 works), `curl` or `wget`, ~1.5 GB disk |
 | A team on your own Linux server | **Docker Compose** (below) | Docker Engine + `docker compose`, a public domain pointed at the host (auto-TLS; an internal-CA fallback exists), a Google OAuth 2.0 client for login |
-| A team on AWS | **ECS (CloudFormation)** (below) | An AWS account, ECR for the images, the templates bundled in the compose tar |
-| Offline / restricted network | Any of the above, air-gap paths | The images tar (Compose) or the `-bundle` native tar; file hand-off instead of downloads |
 
 Common to all editions: outbound network is needed once per workspace to
 pin-install the agent CLIs on first start (air-gap alternatives are documented
@@ -77,11 +93,39 @@ af start
   `SHA256SUMS`, extracts it to `~/.local/opt/agent-fleet/<version>/` and
   symlinks `~/.local/bin/af`.
 - Updating uses the same command (your data lives in
-  `~/.local/share/agent-fleet` and is never touched).
-- To pin a version: `AF_VERSION=0.1.0 bash install.sh`
+  `~/.local/share/agent-fleet` and is never touched). You can also update in
+  place with `af update`.
+- **Automatic updates:** the installer enables a daily systemd user timer that
+  runs `af update` to *stage* the latest release (sha256-verified). It never
+  restarts a running service — apply it when convenient via
+  `systemctl --user restart agent-fleet` or the Console's "restart to apply"
+  button, so live agent sessions are never dropped. Opt out with
+  `AF_NO_AUTOUPDATE=1 bash install.sh`.
+- To pin a version: `AF_VERSION=0.1.0 bash install.sh` (also stops auto-updates
+  advancing past it when set in the unit `Environment=`)
 - For details (host requirements, air-gap installs, running as a service,
   optional text-to-speech with VOICEVOX / Zundamon, limitations) see the
   `README.md` bundled inside the tar.
+
+### Cloning private repos (git-provider OAuth)
+
+Each user connects their own GitHub / Bitbucket from the Console
+(**⚙ Settings → Git**) — pasting a token works out of the box. To also light up
+the one-click **"Connect via OAuth"** buttons, set these in the environment
+**before `af start`** (the launcher passes them through to the control plane):
+
+| Provider | Variables | Notes |
+|---|---|---|
+| **GitHub** (device flow) | `GITHUB_OAUTH_CLIENT_ID` | Create an OAuth App with **"Enable Device Flow" ON**. The client_id is **not a secret**; no callback URL is needed, so it works on plain `localhost`. |
+| **Bitbucket** (auth code) | `BITBUCKET_OAUTH_KEY`, `BITBUCKET_OAUTH_SECRET`, `PUBLIC_BASE_URL` | The consumer's Callback URL must exactly equal `<PUBLIC_BASE_URL>/api/oauth/bitbucket/callback`. |
+
+```bash
+GITHUB_OAUTH_CLIENT_ID=<your-client-id> af start
+```
+
+Under the systemd unit below, add them as `Environment=` lines in `[Service]`.
+Without any of this, token/PAT paste in the Console still works — OAuth is only a
+convenience.
 
 Run it as a service instead of foreground `af start` (systemd is on by default in
 WSL2) — create `~/.config/systemd/user/agent-fleet.service`:
@@ -110,30 +154,30 @@ service fails to bind port 8099.
 
 ## Installing the Docker Compose edition (team, on-prem)
 
-The images are **not** published to a registry — download both the bundle
+The images are **not** published to a registry, so the bundle
 (`agent-fleet-<version>.tar.gz`) and the images tar
-(`agent-fleet-images-<version>.tar.gz`) from
-[Releases](https://github.com/k-k1/agent-fleet-dist/releases), then:
+(`agent-fleet-images-<version>.tar.gz`) ship on
+[Releases](https://github.com/k-k1/agent-fleet-dist/releases). A helper fetches
+and verifies both, extracts the bundle and `docker load`s the images:
 
 ```bash
-V=<version>
-sha256sum -c --ignore-missing SHA256SUMS          # verify both downloads
-tar xzf "agent-fleet-$V.tar.gz" && cd "agent-fleet-$V"
-./load-images.sh "../agent-fleet-images-$V.tar.gz" # docker load (CP + workspace)
-cp .env.example .env                               # fill in secrets, domain, Google OAuth
+curl -fsSL https://raw.githubusercontent.com/k-k1/agent-fleet-dist/main/install-compose.sh | bash
+cd agent-fleet-<version>
+cp .env.example .env     # fill in secrets, domain, Google OAuth (see below)
 docker compose up -d
 ```
 
+Unlike the native edition this is **not** a full one-liner: you must edit `.env`
+(secrets, `PUBLIC_DOMAIN`, Google OAuth, optionally the git-provider OAuth vars
+below) before `docker compose up`. To pin a version, prefix
+`AF_VERSION=<version>`; `AF_SKIP_IMAGES=1` skips the large images download when
+you hand it off separately. Prefer the manual path? Download the two tars, then
+`sha256sum -c --ignore-missing SHA256SUMS`, `tar xzf`, `./load-images.sh`.
+
 The bundled `README.md` is the full runbook: prerequisites, key generation,
-TLS/domain setup, backup/restore, upgrades and troubleshooting.
-
-## Installing on AWS (ECS / CloudFormation)
-
-The compose bundle also carries the AWS deploy surface under `aws/`:
-CloudFormation templates for an ECS deployment (`aws/ecs/cfn/`), a script to
-push the released images to your ECR (`aws/ecs/release-ecr.sh`), and a
-single-EC2 variant (`aws/ec2-single/`). Start from `aws/ecs/README.md` inside
-the bundle.
+TLS/domain setup, git-provider OAuth (`GITHUB_OAUTH_CLIENT_ID` /
+`BITBUCKET_OAUTH_KEY` / `BITBUCKET_OAUTH_SECRET` in `.env`), backup/restore,
+upgrades and troubleshooting.
 
 ## Uninstalling / removing data (native edition)
 
@@ -179,4 +223,11 @@ this automatically).
   (Claude Code / Codex / GitHub Copilot / Antigravity / OpenCode) are not bundled — on first start
   each user fetches verified, pinned versions from the respective upstream
   (this build intentionally avoids redistribution).
+- By contrast, a **full-baked Docker image you build yourself** (the default,
+  `BAKE_AGENT_CLIS=1`) bundles the agent CLI binaries themselves. **Using it
+  within your own organization is fine, but do not redistribute that image**
+  (pushing to a public registry, handing out a `docker save` image tar, etc.) —
+  that would redistribute the proprietary CLIs. Build the lean variant
+  (`BAKE_AGENT_CLIS=0`) if you need to hand an image to third parties (the
+  images and rootfs in this distribution are that lean build).
 - For attribution of bundled OSS, see the `NOTICE` file inside each tar.
