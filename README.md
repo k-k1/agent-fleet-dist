@@ -220,7 +220,7 @@ this automatically).
 ## License / bundled software
 
 - The distributed images and rootfs are a **lean build**: agent CLIs
-  (Claude Code / Codex / GitHub Copilot / Antigravity / OpenCode) are not bundled — on first start
+  (Claude Code / Codex / GitHub Copilot / Antigravity / Cursor / OpenCode) are not bundled — on first start
   each user fetches verified, pinned versions from the respective upstream
   (this build intentionally avoids redistribution).
 - By contrast, a **full-baked Docker image you build yourself** (the default,
