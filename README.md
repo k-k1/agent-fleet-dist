@@ -70,6 +70,47 @@ Each user signs in to the agent CLIs with **their own account/seat** (e.g. a
 Claude subscription) from the console; the deployment itself does not bundle or
 share any AI-provider credentials.
 
+## Which agent does what
+
+Not every capability is available on every agent CLI — some are gated by what the
+upstream CLI exposes. This matrix is the quick reference (✓ = supported,
+— = not applicable / not supported):
+
+| Capability | Claude | Codex | Cursor | Copilot | Antigravity | OpenCode | Shell |
+|---|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| Managed (paneless) execution | — | ✓ | ✓ | ✓ | — | ✓ | — |
+| Terminal (CLI) execution | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Live chat mirror | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
+| History when stopped (read-only) | ✓ | ✓ | —³ | ✓ | ✓ | ✓ | — |
+| Model choice at launch | ✓ | ✓ | ✓ | ✓¹ | ✓ | ✓ | — |
+| Reasoning-effort control | ✓ | ✓ | —² | ✓ | —² | ✓ | — |
+| Plan mode | ✓ | ✓ | ✓ | ✓ | — | ✓ | — |
+| Context-window gauge | ✓ | ✓ | — | — | — | ✓ | — |
+| Image paste | ✓ | ✓ | — | — | ✓ | ✓ | — |
+| Fork a conversation | ✓ | ✓ | — | — | — | ✓ | — |
+| Runs in a git worktree | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Scheduled (unattended) runs | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
+| Chat bridge (Discord / Slack) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
+| Usable as the assistant chat | ✓ | ✓ | ✓ | — | ✓ | ✓ | — |
+| WS-bar usage / limit chip | ✓ | ✓ | — | ✓ | ✓ | — | — |
+
+¹ Copilot's model choice is plan-dependent (Free = Auto only).
+² Cursor and Antigravity fold the reasoning effort into the model name, so there is
+no separate control. The WS-bar usage chip needs an account-level limit to show —
+opencode (bring-your-own provider API keys) and Cursor expose none. **SSM** sessions
+(remote login over AWS SSM) behave like Shell: terminal only, no conversation, and not
+tied to a workspace worktree.
+
+³ Cursor's managed (default) execution keeps no local transcript — a **stopped** Cursor
+session has no history to show (the live mirror works while running, and running Cursor
+as Terminal (CLI) does persist a readable history).
+
+**Default model for the assistant chat** — each assistant can pin its own, and Claude's
+default is also settable deployment-wide via `AF_CHAT_MODEL`. These favour fast, low-cost
+tiers because the assistant is conversational: Claude → Sonnet 5 · Codex → `gpt-5.6-luna`
+· OpenCode → `opencode/nemotron-3-ultra-free` · Antigravity → Gemini 3.5 Flash · Cursor →
+its own default (Auto). Cursor's assistant runs **read-only** (`--mode ask`).
+
 ## Getting started — which edition?
 
 | Your situation | Edition | What you need |
@@ -225,3 +266,25 @@ this automatically).
   the respective upstream and signs in with their own account. This distribution
   intentionally does not redistribute the proprietary CLIs.
 - For attribution of the bundled OSS, see the `NOTICE` file inside each tar.
+
+## Disclaimer — autonomous agent execution
+
+Agent Fleet runs AI coding agents that act on your behalf: they execute commands,
+edit files, and commit and push to remote repositories. That includes running
+**unattended** (scheduled runs that wake a stopped workspace), in
+**permission-bypassing modes**, and through **shell / SSM sessions that run the
+strings you send verbatim**. Such actions can be destructive or irreversible
+(deleting data, force-pushing, changing infrastructure) and can incur charges on
+your AI-provider and cloud accounts.
+
+You are solely responsible for the workspaces, credentials, repositories, and
+infrastructure you connect, and for reviewing what the agents do. Operate with
+least-privilege credentials, keep backups, and prefer the approval gates
+(shell-command confirmation, chat-bridge approve/deny) for destructive actions.
+
+This software is distributed under the **Apache License 2.0** and, as stated in
+that license, is provided **"AS IS", WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND**; the authors and contributors accept **no liability** for any damage, data
+loss, downtime, or cost arising from its use (see `LICENSE`, sections 7–8). The
+same applies to the third-party agent CLIs and services you connect — their use is
+governed by their own terms.
