@@ -1,0 +1,93 @@
+Agent Fleet
+Copyright 2026 k-k1
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Primary distribution:
+  https://github.com/k-k1/agent-fleet-dist
+
+  Official Agent Fleet releases are published only at the URL above. Section 4(d)
+  of the Apache License requires redistributions to carry the attribution notices
+  in this NOTICE file, so please keep the line above intact when you redistribute
+  Agent Fleet or a derivative work, so that recipients can find the original. If
+  you modified the work, section 4(b) separately requires the modified files to
+  carry prominent notice of the change.
+
+  Nothing in this NOTICE adds conditions to the Apache License, Version 2.0.
+
+--------------------------------------------------------------------------------
+This product bundles the CMU Pronouncing Dictionary (used by the TTS English→katakana
+preprocessing in control-plane/enkana.go):
+
+  cmudict — Copyright (C) 1993-2015 Carnegie Mellon University. All rights reserved.
+  Licensed under a 2-clause BSD-style license. Full text: control-plane/assets/cmudict.LICENSE
+  Source: https://github.com/cmusphinx/cmudict
+
+--------------------------------------------------------------------------------
+Third-party software bundled in the distributed container images / rootfs
+(docs/35 §35.4.1). License texts ship with each component inside the image
+(/usr/share/doc/<pkg>/copyright for Debian packages, or the component's own
+distribution). Proprietary agent CLIs (Claude Code, GitHub Copilot CLI,
+Antigravity CLI) are NOT bundled — deployments fetch them directly from their
+official distribution channels at first start (boot-install).
+
+Base system and utilities (Debian GNU/Linux, via the node:22-bookworm images):
+  Debian packages under their respective licenses, including:
+  git (GPL-2.0), git-lfs (MIT), subversion (Apache-2.0), tmux (ISC),
+  vim (Vim license), curl (curl license), wget (GPL-3.0), OpenSSH client
+  (BSD-style), GnuPG (GPL-3.0), ripgrep (MIT), fd-find (MIT/Apache-2.0),
+  bat (MIT/Apache-2.0), jq (MIT), htop (GPL-2.0), procps (GPL-2.0/LGPL-2.1),
+  strace (LGPL-2.1), unzip/zip (Info-ZIP), GCC toolchain / build-essential
+  (GPL-3.0 with GCC Runtime Library Exception), Python 3 (PSF-2.0),
+  fontconfig (MIT-style), DejaVu fonts (Bitstream Vera / Arev licenses),
+  Noto CJK fonts (SIL OFL 1.1).
+
+Runtimes and tools:
+  Node.js — MIT License (https://nodejs.org)
+  Go toolchain — BSD-3-Clause (https://go.dev)
+  Chromium — BSD-3-Clause and other licenses (https://www.chromium.org;
+    bundled in the docker workspace image; the native lean rootfs downloads a
+    pinned build on demand instead)
+  GitHub CLI (gh) — MIT License (https://github.com/cli/cli)
+  Docker CLI — Apache-2.0 (control-plane image; https://github.com/docker/cli)
+  uv / uvx (Astral) — MIT or Apache-2.0 (https://github.com/astral-sh/uv)
+  mcp-grafana — Apache-2.0 (https://github.com/grafana/mcp-grafana)
+  awslabs.cloudwatch-mcp-server — Apache-2.0 (https://github.com/awslabs/mcp)
+  AWS CLI v2 — Apache-2.0 (https://github.com/aws/aws-cli)
+  AWS Session Manager Plugin — Apache-2.0
+    (https://github.com/aws/session-manager-plugin)
+
+Agent CLIs (open source; baked into self-hosted full builds, boot-installed
+from the official registries in the lean distribution variant):
+  OpenAI Codex CLI (@openai/codex) — Apache-2.0 (https://github.com/openai/codex)
+  opencode (opencode-ai) — MIT License (https://github.com/sst/opencode)
+  rtk — Apache-2.0 (https://github.com/rtk-ai/rtk)
+
+--------------------------------------------------------------------------------
+Statically linked binaries bundled in the native package (agent-fleet-native-*,
+docs/35 §35.7.2). Each is built unmodified from the upstream release tarball at
+the version pinned in deploy/release/native/Dockerfile.tools:
+
+  bubblewrap (bin/bwrap) — LGPL-2.0-or-later
+    (https://github.com/containers/bubblewrap)
+  git (bin/git, bin/git-http-backend) — GPL-2.0
+    (https://git-scm.com; source: https://mirrors.edge.kernel.org/pub/software/scm/git/)
+  zstd (bin/zstd) — dual BSD-3-Clause / GPL-2.0, used under BSD-3-Clause
+    (https://github.com/facebook/zstd)
+  musl libc (statically linked into the above) — MIT License (https://musl.libc.org)
+  libcap (statically linked into bwrap) — dual BSD-3-Clause / GPL-2.0
+    (https://sites.google.com/site/fullycapable/)
+  zlib (statically linked into git) — zlib License (https://zlib.net)
+
+Fonts installed on demand by the native lean rootfs (install-chromium):
+  Noto Sans CJK — SIL Open Font License 1.1 (https://github.com/notofonts/noto-cjk)
+
+Source code availability: components licensed under the GPL/LGPL family are
+unmodified Debian packages; their corresponding sources are available from the
+Debian archive (https://www.debian.org / `apt-get source <pkg>` against the
+bookworm suite recorded in the image). The statically linked git and bubblewrap
+binaries in the native package are built unmodified from the upstream release
+tarballs at the exact versions pinned in deploy/release/native/Dockerfile.tools
+(those tarballs are the corresponding source). On written request to the
+distributor we will provide the corresponding source for any GPL/LGPL component
+bundled in a distributed image or package.
