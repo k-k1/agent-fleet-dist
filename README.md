@@ -2,8 +2,19 @@
 
 English | [日本語](README.ja.md)
 
+**Close your laptop. The AI keeps working.**
+
+Run Claude Code, Codex, Copilot, Cursor, and other coding agents in parallel on your
+server, and orchestrate them all from one console. There is no need to stay glued to
+a terminal—attach to any session whenever you need it. Check progress and send the
+next instruction from Discord, Slack, or your phone's browser, wherever you are.
+Session titles and suggested next instructions keep you from losing track of what
+you delegated and what to ask for next.
+
 Distribution artifacts for [Agent Fleet](https://github.com/k-k1/agent-fleet).
 **There is no source code here** — binaries and bundles are attached to Releases.
+
+![The Agent Fleet Console: repo tree with live sessions, a chat mirror of a running agent, and the repository's commit graph side by side](docs/img/console-en.webp)
 
 ## What is Agent Fleet?
 
@@ -41,7 +52,12 @@ Key features:
   for secrets at rest, and per-workspace memory quotas.
 - **Usage visibility** — see each agent account's usage and rate limits (and
   when they reset) at a glance, plus per-session context usage with warnings
-  and summarized handover before the context window fills up.
+  and summarized handover before the context window fills up. A **token ledger
+  breaks spend down by feature, agent and model** (Settings › Usage), so the
+  interactive sessions and the auxiliary LLM calls the fleet makes on its own
+  (title suggestions, compaction, reply suggestions…) are measured on one
+  yardstick. Calls from CLIs that report no tokens are counted as *unmeasured*
+  rather than zero, so nothing looks free that wasn't.
 - **Assistant chat & fleet orchestration** — a built-in assistant that can
   drive the fleet: start and steer multiple agent sessions, orchestrate work
   across different agents and hand tasks over between them with summarized
@@ -69,6 +85,20 @@ Key features:
 Each user signs in to the agent CLIs with **their own account/seat** (e.g. a
 Claude subscription) from the console; the deployment itself does not bundle or
 share any AI-provider credentials.
+
+## A look around
+
+| | |
+|---|---|
+| ![Launch dialog: pick the agent CLI, its model, reasoning effort, start mode and whether to run in a fresh git worktree](docs/img/launch-en.webp) | ![Chat mirror: the agent's question rendered as an answerable card with the options it offered](docs/img/mirror-en.webp) |
+| **Start anything from one dialog** — agent, model, reasoning effort, start mode, and a fresh git worktree or the working copy as-is. | **Follow and steer from the browser** — the agent's questions, plans and permission prompts arrive as cards you answer in place. |
+| ![Three panes: the chat mirror, a live terminal attached to a shell session, and the repository's working-tree changes with a commit box](docs/img/split-en.webp) | ![Split panes: the commit graph with branch lanes on the left, the selected commit's diff on the right](docs/img/scm-en.webp) |
+| **Split panes** — mirror, live terminal and working-tree changes side by side; each pane can also pop out into its own tab. | **Real git, in the console** — commit graph beside the selected commit's diff, plus staging and commit, per working copy and worktree. |
+| ![Usage tab: a stacked per-feature token chart over 30 days, KPI tiles for tokens, calls, cache reads, API-equivalent cost and unmeasured calls, and breakdowns by feature, agent and model](docs/img/usage-en.webp) | ![A terminal pane attached to a shell session, showing a build and a git status run](docs/img/terminal-en.webp) |
+| **See where the tokens went** — per feature, per agent and per model, over 24h / 7d / 30d. Calls that report no tokens are counted separately, never as zero. | **A real terminal, too** — every session (agent or plain shell) is attachable as a live PTY. |
+
+<sub>Screenshots use a demo dataset; the same views in Japanese are in
+[README.ja.md](README.ja.md).</sub>
 
 ## Which agent does what
 
