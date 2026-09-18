@@ -3,6 +3,15 @@
 Release notes index for [Agent Fleet](https://github.com/k-k1/agent-fleet-dist). Each entry links
 to the release, where the full notes are. 日本語は [CHANGELOG.ja.md](CHANGELOG.ja.md)。
 
+## [0.22.0](https://github.com/k-k1/agent-fleet-dist/releases/tag/v0.22.0) — 2026-09-18
+
+PostgreSQL and MySQL now run inside the workspace — one database per working copy, no
+Docker, nothing to install by hand — driven from a terminal with `af-db` or from a
+Databases tab in the settings. The model catalogue reads like a catalogue too: a model
+carries the name its publisher gave it and the pictures it was shown off with, a
+repository's quantisations say what fits the GPU before anything is downloaded, and
+members pick a model by name rather than by id.
+
 ## [0.21.0](https://github.com/k-k1/agent-fleet-dist/releases/tag/v0.21.0) — 2026-09-16
 
 Taking a model in is one press now: search, read the plan, confirm. The S3 bucket behind
@@ -24,7 +33,7 @@ its first load.
 ## [0.20.0](https://github.com/k-k1/agent-fleet-dist/releases/tag/v0.20.0) — 2026-09-13
 
 Images are generated and browsed in the Console itself, every running session fits on one
-screen, and the inference engine's box is bought by the Control Plane from a list of offers —
+screen, and the inference engine's instance is bought by the Control Plane from a list of offers —
 one of which can be Spot.
 
 ## [0.19.0](https://github.com/k-k1/agent-fleet-dist/releases/tag/v0.19.0) — 2026-09-11
@@ -43,7 +52,7 @@ so several environments are told apart at a glance.
 
 ## [0.17.0](https://github.com/k-k1/agent-fleet-dist/releases/tag/v0.17.0) — 2026-09-09
 
-An ECS deployment can now run inference on its own GPU, on a box that only exists while
+An ECS deployment can now run inference on its own GPU, on an instance that only exists while
 somebody is using it: a model that appears in opencode's launch menu, and image generation
 that needs no external account. Sessions can also be told to stop themselves once the work
 is done, and image generation gained a second provider.
