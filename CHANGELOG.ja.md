@@ -3,6 +3,14 @@
 [Agent Fleet](https://github.com/k-k1/agent-fleet-dist) のリリースノート索引です。各項目はリリース
 ページへのリンクで、完全なノートはそちらにあります。English: [CHANGELOG.md](CHANGELOG.md).
 
+## [0.22.0](https://github.com/k-k1/agent-fleet-dist/releases/tag/v0.22.0) — 2026-09-18
+
+PostgreSQL と MySQL がワークスペースの中で動くようになりました——作業コピーごとに 1 つ、
+Docker も手作業の導入もなしで、端末の `af-db` か設定の「データベース」タブから使えます。
+モデル目録も目録らしくなりました。モデルには配布元が付けた名前と作例の絵が並び、
+量子化リポジトリはダウンロードの前に GPU に収まるかを答え、モデルを選ぶ利用者には
+id ではなく名前が届きます。
+
 ## [0.21.0](https://github.com/k-k1/agent-fleet-dist/releases/tag/v0.21.0) — 2026-09-16
 
 モデルの取り込みが 1 押しになりました——検索し、計画を読み、確かめるだけです。カタログの
@@ -24,7 +32,7 @@
 
 ## [0.20.0](https://github.com/k-k1/agent-fleet-dist/releases/tag/v0.20.0) — 2026-09-13
 
-画像の生成と閲覧が Console の中で完結し、走っているセッションが 1 画面に収まり、画像エンジンの箱は
+画像の生成と閲覧が Console の中で完結し、走っているセッションが 1 画面に収まり、画像エンジンのインスタンスは
 コントロールプレーンが「提案（offer）の一覧」から買うようになりました——そのうち 1 つを Spot にできます。
 
 ## [0.19.0](https://github.com/k-k1/agent-fleet-dist/releases/tag/v0.19.0) — 2026-09-11
@@ -93,7 +101,7 @@ File ペインは PDF を描き、Office 文書も簡易プレビューできま
 
 GitHub / Jira / Bitbucket の課題・プルリクエストが左ペインに並び、その 1 件から作業を
 始められるようになりました。`ecs-ec2` ではワークスペースごとにメモリ上限が入り、重い
-ワークスペース 1 つが箱ごと巻き添えにすることがなくなります。
+ワークスペース 1 つがインスタンスごと巻き添えにすることがなくなります。
 
 ## [0.12.4](https://github.com/k-k1/agent-fleet-dist/releases/tag/v0.12.4) — 2026-08-26
 
