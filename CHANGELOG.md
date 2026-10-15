@@ -3,6 +3,14 @@
 Release notes index for [Agent Fleet](https://github.com/k-k1/agent-fleet-dist). Each entry links
 to the release, where the full notes are. 日本語は [CHANGELOG.ja.md](CHANGELOG.ja.md)。
 
+## [0.31.0](https://github.com/k-k1/agent-fleet-dist/releases/tag/v0.31.0) — 2026-10-14
+
+Members of a tenant can send each other messages and requests through a new inbox, opt in to
+sharing their usage limits on a limit board, and land on a Home view that shows what is waiting for
+them. Agent memory gets a browser in Settings with search, edit, restore and purge, and imports from
+muse and memory bundles. The owner of a workspace can open any port it listens on in the preview
+without registering it first.
+
 ## [0.30.0](https://github.com/k-k1/agent-fleet-dist/releases/tag/v0.30.0) — 2026-10-09
 
 Follow-up prompts can wait in a per-session queue while a turn runs, folders download as zip,
