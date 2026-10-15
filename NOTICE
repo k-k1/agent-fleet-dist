@@ -96,7 +96,7 @@ Agent CLIs (open source; baked into self-hosted full builds, boot-installed
 from the official registries in the lean distribution variant):
   OpenAI Codex CLI (@openai/codex) — Apache-2.0 (https://github.com/openai/codex)
   opencode (opencode-ai) — MIT License (https://github.com/sst/opencode)
-  rtk — Apache-2.0 (https://github.com/rtk-ai/rtk)
+  rtk (the Apache-2.0 edition, rtk-oss) — Apache-2.0 (https://github.com/rtk-ai/rtk)
 
 --------------------------------------------------------------------------------
 Statically linked binaries bundled in the native package (agent-fleet-native-*,
