@@ -33,7 +33,7 @@ Main features:
 
 - **Nine agent kinds, one console**: run Claude Code / Codex / GitHub Copilot /
   Antigravity / Cursor / Kiro / OpenCode / Muse Code sessions, and llama.cpp sessions on
-  the fleet's own chat engine, side by side, with per-session model choice. CLI versions are pinned to verified combinations (opt-in self-update), and a daily watcher runs contract tests against the real CLIs when upstream publishes a new version ([how](https://github.com/k-k1/agent-fleet/blob/develop/docs/build/10-development.md#detecting-upstream-cli-breakage)).
+  the fleet's own chat engine, side by side, with per-session model choice. CLI versions are pinned to verified combinations (opt-in self-update), and a daily watcher runs contract tests against the real CLIs when upstream publishes a new version ([how](https://github.com/k-k1/agent-fleet/blob/main/docs/build/10-development.md#detecting-upstream-cli-breakage)).
 - **Agents that work together, across kinds**: a session can start child sessions of
   any other kind (claude handing a review to codex, codex farming a subtask out to
   opencode), each in its own worktree; it steers them, reads their output and gets one
