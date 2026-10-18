@@ -37,7 +37,7 @@ GitHub Copilot CLI / Antigravity CLI / Cursor CLI / Kiro / OpenCode / Muse Code�
   フリート自身のチャットエンジン上の llama.cpp セッションを並べて実行。
   セッション毎のモデル選択に対応し、CLI の版は動作検証済みの組み合わせにピン止め
   （self-update は opt-in）。CLI の新しい版が出ると、毎日の監視が実物の CLI で契約テストを
-  走らせます（[仕組み](https://github.com/k-k1/agent-fleet/blob/develop/docs/build/10-development.ja.md#上流-cli-の破壊検知版ドリフト監視--contract-テスト)）。
+  走らせます（[仕組み](https://github.com/k-k1/agent-fleet/blob/main/docs/build/10-development.ja.md#上流-cli-の破壊検知版ドリフト監視--contract-テスト)）。
 - **異なるエージェント同士が協働する**：セッションは別種のセッションを子として
   起こせます（claude がレビューを codex に、codex が下請けを opencode に）。子は
   それぞれ自分の worktree で動き、親は指示し、出力を読み、完了時に報告を 1 通
